@@ -37,17 +37,23 @@ body > * {
 h1,
 h2,
 h3,
-p {
+p,
+a {
     margin: 0;
     white-space: wrap;
     font-size: 40px;
     font-weight: 200;
 }
 
-p,
+input, label, select {
+    font-size: 40px;
+    padding: 0 10px;
+}
+
+/* p,
 a {
     font-size: 30px;
-}
+} */
 
 .disNone {
     display: none !important;
@@ -116,25 +122,42 @@ a {
     cursor: pointer;
 }
 
-.times,
-twisty-player {
-    min-width: 320px;
+.times {
+    height: 100%;
+}
+
+.times, .bottom-right {
+    width: 45%;
+}
+
+.bottom-right > div {
     width: 60%;
-    max-width: 500px;
+    height: 25%;
+}
+
+.times,
+.show-scramble twisty-player {
+    min-width: 320px;
+    width: 45%;
     row-gap: 30px;
     padding: 10px;
     border: 2px solid black;
 }
 
-twisty-player {
-    width: 40%;
-    max-height: 400px;
+.show-scramble {
+    width: 60% !important;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.show-scramble twisty-player {
+    width: 100%;
     border: none;
 }
 
 .times-bottom {
     column-gap: 40px;
-    height: 100%;
+    height: 80%;
 }
 
 .times .all-times,
@@ -143,7 +166,9 @@ twisty-player {
 }
 
 .times .averages {
+    max-height: 500px;
     row-gap: 25px;
+    overflow-y: scroll;
 }
 
 .times .all-times-outter {
@@ -160,7 +185,7 @@ twisty-player {
 }
 
 .times .all-times-outter .all-times .time-cont{
-    width: fit-content;
+    width: 100%;
 }
 
 .times .all-times::-webkit-scrollbar {
@@ -174,6 +199,10 @@ twisty-player {
 .times .all-times .time-cont,
 .times .all-times .time-cont .time-specs {
     column-gap: 10px;
+}
+
+.times .all-times .time-cont p {
+    width: 50%;
 }
 
 .times .all-times .time-cont .time-specs {
@@ -244,29 +273,33 @@ twisty-player {
     row-gap: 20px;
 }
 
+.times-scrambler {
+    justify-content: center;
+    width: 80vw;
+    max-width: 1600px;
+    flex-wrap: wrap-reverse;
+    height: 50vh;
+}
+
 .scramble-of-time .list {
     row-gap: 10px;
     max-height: 220px;
     overflow-y: scroll;
 }
 
-.scrambler-parent {
+.scramble-of-time .list p {
+    font-size: 40px;
+    white-space: wrap;
+}
+
+.bottom-right {
     justify-content: space-between;
-    width: 80vw !important;
-    max-width: 300px;
-    min-height: 100%;
+    height: 100%;
     align-items: center;
     overflow: hidden;
 }
 
-.times-scrambler {
-    justify-content: space-between;
-    width: 80vw;
-    max-width: 800px;
-    flex-wrap: wrap-reverse;
-}
-
-.scrambler-parent .canvas-cont {
+.bottom-right .canvas-cont {
     width: 100%;
     aspect-ratio: 1;
     overflow: hidden;
@@ -279,7 +312,7 @@ twisty-player {
 }
 
 .averages > div {
-    row-gap: 8px;
+    row-gap: 0;
 }
 
 .total, .mean, .best {
@@ -315,4 +348,16 @@ twisty-player {
 
 .best-marked.bottom {
     border-bottom: 2px solid orange;
+}
+
+.graph-cont {
+    width: 60% !important;
+}
+
+#time-graph {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
 }

@@ -45,17 +45,24 @@
             </div>
         </div>
 
-        <div class="scrambler-parent flex-c" id="cube&move">
+        <div class="bottom-right flex-c" id="cube&move">
             <div class="scramble-of-time flex-c">
                 <h2>Scramble of time:</h2>
                 <div class="list flex-c"></div>
             </div>
-            <div class="flex-c">
+            <div class="show-scramble flex-c">
                 <twisty-player alg="" control-panel="none"></twisty-player>
                 <div class="for-one-by-one disNone">
                     <p>Just imagine a Rubik's Cube with no faces to turn.</p>
                 </div>
-                <p class="copyright">© by <a href="https://cdn.cubing.net" target="_blank">cdn-cubing</a></p>
+                <p class="copyright disNone">© by <a href="https://cdn.cubing.net" target="_blank">cdn-cubing</a></p>
+            </div>
+            <div class="graph-cont flex-c">
+                <canvas id="time-graph"></canvas>
+                <form action="">
+                    <label for="choose-avgtype">choose avgtype:</label>
+                    <select name="" id="choose-avgtype" onclick="chooseTimeTypeToDraw(event.target.value)"></select>
+                </form>
             </div>
         </div>
     </div>

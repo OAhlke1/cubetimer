@@ -2,11 +2,122 @@ function onLoadFunc() {
     if (!hideAllowSavingOverlay) { document.querySelector('.cookies-overlay').classList.remove('disNone'); }
     if (allowSaving) { allowSavingCheckBox.checked = true; }
     setTurns();
+    setCanvas();
     setPuzzleSelects();
     writeAvgTypeConts();
+    setDrawOptions();
     if (localStorage.times) {
         getSavedElements();
+        getWorstTime();
+        chooseTimeTypeToDraw("all");
     } else { setTimeAndScrambleObject(); }
+}
+
+function setCanvas() {
+    timeGraph.setAttribute('width', scramblerParent.offsetWidth);
+    timeGraph.setAttribute('height', 0.75 * scramblerParent.offsetWidth);
+    ctx = timeGraph.getContext('2d');
+}
+
+function getWorstTime() {
+    let indexWorst = 0;
+    let list = times[puzzle]["timesList"];
+    for (let i = 0; i < list.length; i++) {
+        let time = list[i]["time"];
+        if (time > worstTime) { worstTime = time; }
+    }
+}
+
+function chooseTimeTypeToDraw(avgType) {
+    let points = getPoints(avgType);
+    ctx.clearRect(0, 0, timeGraph.offsetWidth, timeGraph.offsetHeight);
+    setDots(points, avgType);
+    drawTimes(points, avgType);
+}
+
+function setDrawOptions() {
+    for (avgType of avgTypes) {
+        chooseAvgType.innerHTML += `
+            <option value="${avgType}" ${avgType === "all" ? "selected" : ""}>
+                ${avgType === "all" ? "all times" : "average of "+avgType}
+            </option>
+        `;
+    }
+}
+
+function drawTimes(points, avgType) {
+    let fillColor = getLineColor(avgType);
+    for (let i = 0; i < points.length - 1; i++) {
+        ctx.strokeStyle = fillColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[i + 1].x, points[i + 1].y);
+        ctx.stroke();
+    }
+}
+
+function getLineColor(avgType) {
+    switch (avgType) {
+        case "all":
+            return "blue";
+        case 5:
+            return "green";
+        case 12:
+            return "orange";
+        case 20:
+            return "magenta";
+        case 50:
+            return "grey";
+    }
+}
+
+function setDots(points, avgType) {
+    let fillColor = getLineColor(avgType);
+    for (let i = 0; i < points.length; i++) {
+        ctx.fillStyle = fillColor;
+        ctx.beginPath();
+        ctx.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+    }
+}
+
+function getPoints(avgType) {
+    let points = [], averages = [];
+    let list = times[puzzle]["timesList"];
+    let gW = timeGraph.offsetWidth;
+    let gH = timeGraph.offsetHeight;
+    if (avgType === "all") {
+        getWorstTime();    
+        for (let i = 1; i <= times[puzzle]["timesList"].length; i++) {
+            points.push({
+                x: i === 1 ? 0.05 * gW : 0.95 * gW * (i - 1) / (list.length - 1),
+                y: gH * (1 - 0.8 * list[i - 1]["time"] / worstTime)
+                // y: gH * (0.8 * list[i - 1]["time"] / worstTime)
+            });
+        }
+    } else {
+        averages = getAveragesForDrawing(avgType);
+        for (let i = 0; i < averages.length; i++) {
+            points.push({
+                x: i === 1 ? 0.05 * gW : 0.95 * gW * (i - 1) / (averages.length - 1),
+                y: gH * (1 - 0.8 * averages[i - 1] / Math.max(...averages))
+                // y: gH * (0.8 * averages[i - 1] / Math.max(...averages))
+            });
+        }
+    }
+    return points;
+}
+
+function getAveragesForDrawing(avgType) {
+    let averages = [], sum = 0;
+    for (let i = 0; i < times[puzzle]["timesList"].length - avgType; i++) {
+        for (let j = 0; j < avgType; j++) { sum += times[puzzle]["timesList"][i+j]["time"]; }
+        averages.push(sum / avgType);
+        sum = 0;
+    }
+    return averages;
 }
 
 function refuseShowSavingOverlay() {
@@ -68,7 +179,9 @@ function setCubicalTurns(puzzle) {
 function setPuzzleSelects() {
     for (puzzleType of puzzleTypes) {
         puzzleSelector.innerHTML += `
-            <option value="${puzzleType}" ${puzzleType === 3 ? "selected" : ""} style="${puzzleType === 1 ? 'background-color: red;' : ''}">${typeof puzzleType === "string" ? puzzleType.charAt(0).toUpperCase() + puzzleType.slice(1, puzzleType.length) : puzzleType + "x" + puzzleType + "x" + puzzleType}</option>
+            <option value="${puzzleType}" ${puzzleType === 3 ? "selected" : ""} style="${puzzleType === 1 ? 'background-color: red;' : ''}">
+                ${typeof puzzleType === "string" ? puzzleType.charAt(0).toUpperCase() + puzzleType.slice(1, puzzleType.length) : puzzleType + "x" + puzzleType + "x" + puzzleType}
+            </option>
         `;
     }
 }
@@ -175,6 +288,7 @@ function onTimerStop() {
     writeTimes();
     milliseconds = 0;
     if (times[puzzle]["timesList"].length > 1) { markMinMax(); }
+    chooseTimeTypeToDraw("all");;
     generateScramble();
 }
 
@@ -221,7 +335,6 @@ function calcBestAverage(avgType) {
 }
 
 function recalcBestAverages() {
-    console.log("recalc!");
     let bestAverage = 0;
     let allTimesLength = times[puzzle]["timesList"].length;
     for (avgType of avgTypes) {
@@ -447,11 +560,11 @@ function showHideForOneByOne() {
     forOneByOneShown = !forOneByOneShown;
     if (puzzle != 1) {
         twistyPlayer.classList.remove('disNone');
-        showHidecopyRight(true);
+        // showHidecopyRight(true);
     } else if (forOneByOneShown) {
         twistyPlayer.classList.add('disNone');
         forOneByOne.classList.remove('disNone');
-        showHidecopyRight(false);
+        // showHidecopyRight(false);
     }
 }
 
@@ -479,7 +592,7 @@ function reshowScramble(index) {
         scrambleText = scrambleText.slice(0, scrambleText.length - 1);
         twistyPlayer.setAttribute('alg', scrambleText);
         highlightTurns(index);
-        showHidecopyRight(true);
+        // showHidecopyRight(true);
     }
 }
 
@@ -517,17 +630,17 @@ function showScramble() {
         if (puzzle === 1) {
             forOneByOne.classList.remove('disNone');
             twistyPlayer.classList.add('disNone');
-            showHidecopyRight(false);
+            // showHidecopyRight(false);
         } else {
             forOneByOne.classList.add('disNone');
             twistyPlayer.classList.remove('disNone');
-            showHidecopyRight(true);
+            // showHidecopyRight(true);
             twistyPlayer.setAttribute("puzzle", (typeof puzzle != "string") ? `${puzzle}x${puzzle}x${puzzle}` : puzzle);
         }
     } else {
         if (puzzle === 1) {
             forOneByOne.classList.add('disNone');
-            showHidecopyRight(false);
+            // showHidecopyRight(false);
         } else { twistyPlayer.classList.add('disNone'); }
     }
 }
@@ -537,7 +650,7 @@ function hideScramble() {
 }
 
 function showScrambleOfTime(elem) {
-    scrambleOfTimeDoc.innerHTML = scrambles[puzzle][+elem.closest('.time-cont').getAttribute('data-timeindex')];
+    scrambleOfTimeDoc.innerHTML = "<p>" + scrambles[puzzle][+elem.closest('.time-cont').getAttribute('data-timeindex')] + "</p>";
 }
 
 function hideScrambleOfTime() {
@@ -557,6 +670,7 @@ function selectPuzzle() {
     timesHeadline.innerHTML = `${typeof puzzle === "string" ? puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length) : puzzle + "x" + puzzle} times:`;
     timer.innerHTML = "0.00";
     deleteAveragePrints();
+    chooseTimeTypeToDraw("all");
     for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
     writeTimes();
     generateScramble();

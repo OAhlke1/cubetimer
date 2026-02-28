@@ -1,0 +1,294 @@
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    align-items: center;
+    background-color: beige;
+    row-gap: 50px;
+}
+
+body > * {
+    width: 800px;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-c {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-cr {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+    white-space: wrap;
+}
+
+.disNone {
+    display: none !important;
+}
+
+.green-font {
+    color: green;
+}
+
+.red-font {
+    color: red;
+}
+
+.orange-font {
+    color: orange;
+    cursor: auto;
+}
+
+.beige-font p {
+    color: beige !important;
+}
+
+.timer-cont {
+    row-gap: 20px;
+}
+
+.timer-cont p {
+    font-size: 30px;
+}
+
+.options {
+    justify-content: center;
+    column-gap: 30px;
+}
+
+.timer-cont .scramble-cont,
+.timer-cont .cube-size-cont {
+    height: fit-content;
+    row-gap: 20px;
+}
+
+.timer-cont .scramble-cont .scramble-length-cont,
+.timer-cont .cube-size-cont .scramble-length-cont {
+    align-items: center;
+    column-gap: 20px;
+}
+
+.timer-cont .scramble-cont .scramble,
+.timer-cont .cube-size-cont .scramble {
+    font-size: 20px;
+    flex-wrap: wrap;
+}
+
+.timer-cont p.timer {
+    align-self: center;
+    font-size: 100px;
+}
+
+.scramble {
+    justify-content: center;
+    column-gap: 10px;
+    flex-wrap: wrap;
+}
+
+.scramble .scramble-button {
+    cursor: pointer;
+}
+
+.times,
+twisty-player {
+    min-width: 320px;
+    width: 60%;
+    max-width: 500px;
+    row-gap: 30px;
+    padding: 10px;
+    border: 2px solid black;
+}
+
+twisty-player {
+    width: 40%;
+    max-height: 400px;
+    border: none;
+}
+
+.times-bottom {
+    column-gap: 40px;
+    height: 100%;
+}
+
+.times .all-times,
+.times .averages {
+    width: 50%;
+}
+
+.times .averages {
+    row-gap: 25px;
+}
+
+.times .all-times-outter {
+    height: 100%;
+    width: 50%;
+    overflow-y: scroll;
+}
+
+.times .all-times-outter .all-times {
+    row-gap: 15px;
+    height: 300px;
+    max-height: 360px;
+    width: 100% !important;
+}
+
+.times .all-times-outter .all-times .time-cont{
+    width: fit-content;
+}
+
+.times .all-times::-webkit-scrollbar {
+    display: none;
+}
+
+.times .all-times p {
+    cursor: pointer;
+}
+
+.times .all-times .time-cont,
+.times .all-times .time-cont .time-specs {
+    column-gap: 10px;
+}
+
+.times .all-times .time-cont .time-specs {
+    justify-content: space-between;
+    column-gap: 10px;
+    width: 50%;
+}
+
+.times .all-times .time-cont .delete-time {
+    color: red;
+    cursor: pointer;
+}
+
+.times .clear-button {
+    width: fit-content;
+    cursor: pointer;
+}
+
+
+.clear-overlay {
+    align-items: center;
+    justify-content: space-between;
+    padding: 1%;
+    width: 50vw;
+    max-width: 400px;
+    height: 50vh;
+    max-height: 225px;
+    background-color: green;
+    border-radius: 3%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+}
+
+.clear-overlay h1 {
+    color: white;
+    text-align: center;
+}
+
+.clear-overlay .buttons {
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.clear-overlay .buttons button {
+    color: white;
+    cursor: pointer;
+}
+
+.clear-overlay .buttons button.yes {
+    background-color: blue;
+}
+
+.clear-overlay .buttons button.no {
+    color: black;
+}
+
+.scramble-of-time {
+    row-gap: 20px;
+}
+
+.scramble-of-time .list {
+    row-gap: 10px;
+    max-height: 220px;
+    overflow-y: scroll;
+}
+
+.scrambler-parent {
+    justify-content: space-between;
+    width: 80vw !important;
+    max-width: 300px;
+    min-height: 100%;
+    align-items: center;
+    overflow: hidden;
+}
+
+.times-scrambler {
+    justify-content: space-between;
+    width: 80vw;
+    max-width: 800px;
+    flex-wrap: wrap-reverse;
+}
+
+.scrambler-parent .canvas-cont {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.clearings {
+    align-self: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.averages > div {
+    row-gap: 8px;
+}
+
+.total, .mean {
+    column-gap: 10px;
+}
+
+.no-times {
+    color: grey !important;
+}
+
+.allow-saving {
+    align-items: center;
+}
+
+.copyright {
+    align-self: center;
+    font-size: 12px;
+}
+
+.best-marked {
+    border-right: 2px solid orange;
+    border-left: 2px solid orange;
+    padding: 0 5px;
+}
+
+.best-marked.top {
+    border-top: 2px solid orange;
+}
+
+.best-marked.bottom {
+    border-bottom: 2px solid orange;
+}

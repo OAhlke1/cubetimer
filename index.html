@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/favicon.ico">
+</head>
+
+<body class="flex-c" onload="onLoadFunc()">
+    <div class="timer-cont flex-c">
+        <div class="options flex">
+            <div class="cube-size-cont flex">
+                <label for="choose-puzzle">puzzle:</label>
+                <select id="choose-puzzle" type="select" onchange="selectPuzzle()"></select>
+            </div>
+            <div class="scramble-cont flex-c">
+                <div class="scramble-length-cont flex">
+                    <label for="scramble-length">scramble-length:</label>
+                    <input id="scramble-length" type="number" value="20" max="500" onchange="resetScrambleLength()">
+                </div>
+            </div>
+            <div class="allow-saving flex">
+                <label for="allow-saving">save timer data</label>
+                <input type="checkbox" id="allow-saving" onclick="checkAllowFunc()">
+            </div>
+        </div>
+        <div class="scramble flex"></div>
+        <p class="timer">0.00</p>
+    </div>
+    <div class="times-scrambler flex">
+        <div class="times flex-c">
+            <h2 class="times-headline">3x3 times:</h2>
+            <div class="times-bottom flex">
+                <div class="all-times-outter">
+                    <div class="all-times flex-cr"></div>
+                </div>
+                <div class="averages flex-c"></div>
+            </div>
+            <div class="clearings flex">
+                <a class="clear-button" onclick="showClearingOverlay()">clear 3x3 times</a>
+                <a class="clear-all-button" onclick="showClearingAllOverlay()">reset timer</a>
+            </div>
+        </div>
+
+        <div class="scrambler-parent flex-c" id="cube&move">
+            <div class="scramble-of-time flex-c">
+                <h2>Scramble of time:</h2>
+                <div class="list flex-c"></div>
+            </div>
+            <div class="flex-c">
+                <twisty-player alg="" control-panel="none"></twisty-player>
+                <div class="for-one-by-one disNone">
+                    <p>Just imagine a Rubik's Cube with no faces to turn.</p>
+                </div>
+                <p class="copyright">© by <a href="https://cdn.cubing.net" target="_blank">cdn-cubing</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="delete-time-overlay clear-overlay flex-c disNone">
+        <h1>Do you really want to delete this time</h1>
+        <div class="flex buttons">
+            <button class="flex yes" onclick="removeTime()">Yes</button>
+            <button class="flex no" onclick="hideOverlays()">No</button>
+        </div>
+    </div>
+
+    <div class="clear-overlay flex-c disNone">
+        <h1></h1>
+        <div class="flex buttons">
+            <button class="flex yes" onclick="clearTimesOfPuzzle()">Yes</button>
+            <button class="flex no" onclick="hideOverlays()">No</button>
+        </div>
+    </div>
+
+    <div class="clear-all-overlay clear-overlay flex-c disNone">
+        <h1>Do you really want to delete all your times?</h1>
+        <div class="flex buttons">
+            <button class="flex yes" onclick="resetTimes()">Yes</button>
+            <button class="flex no" onclick="hideOverlays()">No</button>
+        </div>
+    </div>
+
+    <div class="cookies-overlay clear-overlay flex-c disNone">
+        <p>Would you like this page to save your times their scrambles into your webbrowsers storage?</p>
+        <div class="flex buttons">
+            <button class="flex yes" onclick="allowSavingFunc()">Yes</button>
+            <button class="flex no" onclick="refuseShowSavingOverlay()">No</button>
+        </div>
+    </div>
+
+    <div class="test"></div>
+</body>
+
+<script src="scripts/global-vars.js"></script>
+<script src="scripts/script.js"></script>
+<script src="scripts/switches.funcs.js"></script>
+<script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
+
+</html>

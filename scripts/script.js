@@ -242,8 +242,17 @@ function setBestAvgsToTimesObject() {
 }
 
 function setEvents() {
-    document.querySelector('body').addEventListener('keyup', keypressFunc);
-    document.querySelector('body').addEventListener('touchend', keypressFunc);
+    body.addEventListener('click', hideTimeSpecs);
+    body.addEventListener('keyup', keypressFunc);
+    body.addEventListener('touchend', keypressFunc);
+}
+
+function hideTimeSpecs(event) {
+    let timeSpecsOn = document.querySelector('.time-cont .time-specs.on');
+    if(timeSpecsOn && timeSpecsOn !== event.target.closest('.time-specs')) {
+        timeSpecsOn.classList.add('off');
+        timeSpecsOn.classList.remove('on');
+    }
 }
 
 function keypressFunc(event) {
@@ -257,10 +266,10 @@ function keypressFunc(event) {
     } else if (event.key === "Escape") { hideOverlays(); }
 }
 
-function showClearingOverlay() {
-    clearOverlay.querySelector('h1').innerHTML = typeof puzzle === "string" ? `Do you really want to delete your ${puzzle.slice(0, 1).toUpperCase() + puzzle.slice(1, puzzle.length)} times?` : `Do you really want to delete your ${puzzle}x${puzzle} times?`;
+function showClearingOverlayOfPuzzle() {
+    clearOverlayOfPuzzle.querySelector('h1').innerHTML = typeof puzzle === "string" ? `Do you really want to delete your ${puzzle.slice(0, 1).toUpperCase() + puzzle.slice(1, puzzle.length)} times?` : `Do you really want to delete your ${puzzle}x${puzzle} times?`;
     overlayShown = !overlayShown;
-    clearOverlay.classList.remove('disNone');
+    clearOverlayOfPuzzle.classList.remove('disNone');
 }
 
 function showClearingAllOverlay() {
@@ -480,14 +489,32 @@ function getTimeHTML(i) {
     return `
         <div class="time-cont flex" data-timeindex="${i}">
             <p>${i + 1}: ${times[puzzle]["timesList"][i]["dnf"] ? "DNF" : (times[puzzle]["timesList"][i]["time"] / 1000).toFixed(2)}${times[puzzle]["timesList"][i]["penalty"] == 1 ? "+" : ""}</p>
-            <div class="time-specs flex">
-                <p onclick="showScrambleOfTime(this)">S</p>
-                <p onclick="plusTwo(${i})">+2</p>
-                <p onclick="setDnf(${i})">DNF</p>
-                <p class="delete-time" onclick="showDeleteTimeOverlay(this)">X</p>
+            <div class="time-specs off">
+                <p onclick="showHideTimeSpecs(this)">specs</p>
+                <div class="spec-elements flex">
+                    <p onclick="showScrambleOfTime(this)">S</p>
+                    <p onclick="plusTwo(${i})">+2</p>
+                    <p onclick="setDnf(${i})">DNF</p>
+                    <p class="delete-time" onclick="showDeleteTimeOverlay(this)">X</p>
+                </div>
             </div>
         </div>
     `;
+}
+
+function showHideTimeSpecs(elem) {
+    let timeSpecs = elem.closest('.time-specs');
+    if(document.querySelector('.times .all-times .time-cont .time-specs.on') && document.querySelector('.times .all-times .time-cont .time-specs.on') !== timeSpecs) {
+        document.querySelector('.times .all-times .time-cont .time-specs.on').classList.add('off');
+        document.querySelector('.times .all-times .time-cont .time-specs.on').classList.remove('on');
+    }
+    if(timeSpecs.classList.contains('on')) {
+        timeSpecs.classList.remove('on');
+        timeSpecs.classList.add('off');
+    } else {
+        timeSpecs.classList.add('on');
+        timeSpecs.classList.remove('off');
+    }
 }
 
 function setNoTimeYetText() {
@@ -685,11 +712,11 @@ function deleteAveragePrints() {
 }
 
 function plusTwo(index) {
-    times[puzzle][index]["penalty"] = times[puzzle][index]["penalty"] == 0 ? 1 : 0;
-    if (times[puzzle][index]["penalty"] == 1) {
-        times[puzzle][index]["time"] += 2000;
-    } else { times[puzzle][index]["time"] -= 2000; }
-    timesList.querySelectorAll('.time-cont')[index].querySelector('p:first-child').innerHTML = `${index + 1}: ${times[puzzle][index]["time"] / 1000}` + `${times[puzzle][index]["penalty"] == 0 ? "" : "+"}`;
+    times[puzzle]["timesList"][index]["penalty"] = times[puzzle]["timesList"][index]["penalty"] == 0 ? 1 : 0;
+    if (times[puzzle]["timesList"][index]["penalty"] == 1) {
+        times[puzzle]["timesList"][index]["time"] += 2000;
+    } else { times[puzzle]["timesList"][index]["time"] -= 2000; }
+    timesList.querySelectorAll('.time-cont')[index].querySelector('p:first-child').innerHTML = `${index + 1}: ${times[puzzle]["timesList"][index]["time"] / 1000}` + `${times[puzzle]["timesList"][index]["penalty"] == 0 ? "" : "+"}`;
     markMinMax();
     calcAverages();
 }

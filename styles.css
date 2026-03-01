@@ -15,7 +15,7 @@ body {
     row-gap: 50px;
 }
 
-body > * {
+body>* {
     width: 800px;
 }
 
@@ -45,15 +45,20 @@ a {
     font-weight: 200;
 }
 
-input, label, select {
-    font-size: 40px;
+h2 {
+    text-align: center;
+}
+
+input,
+label,
+select {
+    font-size: 30px;
     padding: 0 10px;
 }
 
-/* p,
-a {
-    font-size: 30px;
-} */
+select {
+    width: fit-content;
+}
 
 .disNone {
     display: none !important;
@@ -123,15 +128,18 @@ a {
 }
 
 .times {
+    width: fit-content !important;
     height: 100%;
 }
 
-.times, .bottom-right {
+.times,
+.bottom-right {
     width: 45%;
 }
 
-.bottom-right > div {
-    width: 60%;
+.bottom-right>div {
+    width: 100%;
+    max-width: 300px;
     height: 25%;
 }
 
@@ -145,6 +153,7 @@ a {
 }
 
 .show-scramble {
+    align-items: center;
     width: 60% !important;
     aspect-ratio: 1 / 1;
     overflow: hidden;
@@ -162,7 +171,7 @@ a {
 
 .times .all-times,
 .times .averages {
-    width: 50%;
+    width: fit-content;
 }
 
 .times .averages {
@@ -171,20 +180,28 @@ a {
     overflow-y: scroll;
 }
 
+.times .averages::-webkit-scrollbar {
+    display: none;
+}
+
 .times .all-times-outter {
     height: 100%;
-    width: 50%;
+    width: fit-content;
     overflow-y: scroll;
+}
+
+.times .all-times-outter::-webkit-scrollbar {
+    display: none;
 }
 
 .times .all-times-outter .all-times {
     row-gap: 15px;
     height: 300px;
     max-height: 360px;
-    width: 100% !important;
+    width: fit-content !important;
 }
 
-.times .all-times-outter .all-times .time-cont{
+.times .all-times-outter .all-times .time-cont {
     width: 100%;
 }
 
@@ -202,13 +219,39 @@ a {
 }
 
 .times .all-times .time-cont p {
-    width: 50%;
+    width: fit-content;
+    font-size: 30px;
 }
 
 .times .all-times .time-cont .time-specs {
     justify-content: space-between;
     column-gap: 10px;
-    width: 50%;
+    width: fit-content;
+    position: relative;
+}
+
+.times .all-times .time-cont .time-specs .spec-elements {
+    column-gap: 10px;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-100%);
+    z-index: 5;
+    background-color: black;
+    padding: 5px 10px;
+}
+
+.times .all-times .time-cont .time-specs .spec-elements p {
+    color: white;
+}
+
+.times .all-times .time-cont .time-specs.off .spec-elements {
+    display: none !important;
+}
+
+.times .all-times .time-cont .time-specs.on .spec-elements {
+    display: flex;
 }
 
 .times .all-times .time-cont .time-specs p {
@@ -275,10 +318,10 @@ a {
 
 .times-scrambler {
     justify-content: center;
-    width: 80vw;
+    width: fit-content;
     max-width: 1600px;
-    flex-wrap: wrap-reverse;
     height: 50vh;
+    column-gap: 50px;
 }
 
 .scramble-of-time .list {
@@ -311,16 +354,20 @@ a {
     width: 100%;
 }
 
-.averages > div {
+.averages>div {
     row-gap: 0;
 }
 
-.total, .mean, .best {
+.total,
+.mean,
+.best {
     column-gap: 10px;
 }
 
-.total p, .mean p, .best p {
-    font-size: 40px;
+.total p,
+.mean p,
+.best p {
+    font-size: 30px;
 }
 
 .no-times {
@@ -351,7 +398,13 @@ a {
 }
 
 .graph-cont {
-    width: 60% !important;
+    row-gap: 15px;
+    height: unset !important;
+    aspect-ratio: 1 / 1;
+}
+
+.graph-cont form {
+    align-items: center;
 }
 
 #time-graph {

@@ -40,7 +40,7 @@
                 <div class="averages flex-c"></div>
             </div>
             <div class="clearings flex">
-                <a class="clear-button" onclick="showClearingOverlay()">clear 3x3 times</a>
+                <a class="clear-button" onclick="showClearingOverlayOfPuzzle()">clear 3x3 times</a>
                 <a class="clear-all-button" onclick="showClearingAllOverlay()">reset timer</a>
             </div>
         </div>
@@ -59,7 +59,7 @@
             </div>
             <div class="graph-cont flex-c">
                 <canvas id="time-graph"></canvas>
-                <form action="">
+                <form action="" class="flex">
                     <label for="choose-avgtype">choose avgtype:</label>
                     <select name="" id="choose-avgtype" onclick="chooseTimeTypeToDraw(event.target.value)"></select>
                 </form>
@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <div class="clear-overlay flex-c disNone">
+    <div class="delete-all-puzzle-times clear-overlay flex-c disNone">
         <h1></h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="clearTimesOfPuzzle()">Yes</button>

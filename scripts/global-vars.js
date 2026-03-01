@@ -1,3 +1,4 @@
+let body = document.querySelector('body');
 let allowSavingCheckBox = document.querySelector('#allow-saving');
 let hideAllowSavingOverlay = !localStorage.getItem('hideAllowSavingOverlay') ? false : true;
 let allowSaving = localStorage.getItem('allowSaving') === "false" ? false : true;
@@ -12,6 +13,7 @@ let bestAverages = {};
 let twistyPlayer = document.querySelector('twisty-player');
 let milliseconds = 0;
 let clearOverlay = document.querySelector('.clear-overlay');
+let clearOverlayOfPuzzle = document.querySelector('.delete-all-puzzle-times');
 let clearButton = document.querySelector('.clear-button');
 let overlayShown = false;
 let clearAllOverlay = document.querySelector('.clear-all-overlay');

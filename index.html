@@ -16,19 +16,24 @@
                 <label for="choose-puzzle">puzzle:</label>
                 <select id="choose-puzzle" type="select" onchange="selectPuzzle()"></select>
             </div>
-            <div class="scramble-cont flex-c">
+            <div class="scramble-length-cont flex-c">
                 <div class="scramble-length-cont flex">
                     <label for="scramble-length">scramble-length:</label>
-                    <input id="scramble-length" type="number" value="20" max="500" onchange="resetScrambleLength()">
+                    <input id="scramble-length" type="number" value="20" max="500" onchange="setScrambleLength()">
                 </div>
             </div>
             <div class="allow-saving flex">
                 <label for="allow-saving">save timer data</label>
-                <input type="checkbox" id="allow-saving" onclick="checkAllowFunc()">
+                <input type="checkbox" id="allow-saving" onclick="checkAllowFunc(!allowSaving)">
             </div>
         </div>
-        <div class="scramble flex"></div>
+        <div class="scramble-cont flex-c">
+            <div class="scramble flex"></div>
+            <p class="advise">(Just click on each turn to follow the scrambling turn by turn)</p>
+        </div>
         <p class="timer">0.00</p>
+        <button class="start-btn flex advise" onclick="startStopTimerMobile()">Start</button>
+        <button class="stop-btn disNone" onclick="startStopTimerMobile()"></button>
     </div>
     <div class="times-scrambler flex">
         <div class="times flex-c">
@@ -40,7 +45,7 @@
                 <div class="averages flex-c"></div>
             </div>
             <div class="clearings flex">
-                <a class="clear-button" onclick="showClearingOverlay()">clear 3x3 times</a>
+                <a class="clear-button" onclick="showClearingOverlayOfPuzzle()">clear 3x3 times</a>
                 <a class="clear-all-button" onclick="showClearingAllOverlay()">reset timer</a>
             </div>
         </div>
@@ -59,7 +64,7 @@
             </div>
             <div class="graph-cont flex-c">
                 <canvas id="time-graph"></canvas>
-                <form action="">
+                <form action="" class="flex">
                     <label for="choose-avgtype">choose avgtype:</label>
                     <select name="" id="choose-avgtype" onclick="chooseTimeTypeToDraw(event.target.value)"></select>
                 </form>
@@ -67,7 +72,7 @@
         </div>
     </div>
 
-    <div class="delete-time-overlay clear-overlay flex-c disNone">
+    <div class="delete-time-overlay overlay flex-c disNone">
         <h1>Do you really want to delete this time</h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="removeTime()">Yes</button>
@@ -75,7 +80,7 @@
         </div>
     </div>
 
-    <div class="clear-overlay flex-c disNone">
+    <div class="delete-all-puzzle-times overlay flex-c disNone">
         <h1></h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="clearTimesOfPuzzle()">Yes</button>
@@ -83,7 +88,7 @@
         </div>
     </div>
 
-    <div class="clear-all-overlay clear-overlay flex-c disNone">
+    <div class="clear-all-overlay overlay flex-c disNone">
         <h1>Do you really want to delete all your times?</h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="resetTimes()">Yes</button>
@@ -91,15 +96,13 @@
         </div>
     </div>
 
-    <div class="cookies-overlay clear-overlay flex-c disNone">
-        <p>Would you like this page to save your times their scrambles into your webbrowsers storage?</p>
+    <div class="cookies-overlay overlay flex-c disNone">
+        <p>Would you like this page to save your times and their scrambles into your webbrowsers storage?</p>
         <div class="flex buttons">
-            <button class="flex yes" onclick="allowSavingFunc()">Yes</button>
-            <button class="flex no" onclick="refuseShowSavingOverlay()">No</button>
+            <button class="flex yes" onclick="checkAllowFunc(true)">Yes</button>
+            <button class="flex no" onclick="checkAllowFunc(false)">No</button>
         </div>
     </div>
-
-    <div class="test"></div>
 </body>
 
 <script src="scripts/global-vars.js"></script>

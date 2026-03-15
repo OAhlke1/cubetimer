@@ -1,6 +1,8 @@
 function onLoadFunc() {
     if (!hideAllowSavingOverlay) { document.querySelector('.cookies-overlay').classList.remove('disNone'); }
-    if (allowSaving) { allowSavingCheckBox.checked = true; }
+    if (allowSaving) {
+        allowSavingCheckBox.checked = true;
+    } else { allowSavingCheckBox.checked = false; }
     setTurns();
     setCanvas();
     setPuzzleSelects();
@@ -11,6 +13,12 @@ function onLoadFunc() {
         getWorstTime();
         chooseTimeTypeToDraw("all");
     } else { setTimeAndScrambleObject(); }
+    writeTimes();
+    showHideHowToStart();
+}
+
+function showHideHowToStart() {
+    if (window.innerWidth > 800) { startBtn.classList.add('disNone'); }
 }
 
 function setCanvas() {
@@ -31,7 +39,7 @@ function getWorstTime() {
 function chooseTimeTypeToDraw(avgType) {
     let points = getPoints(avgType);
     ctx.clearRect(0, 0, timeGraph.offsetWidth, timeGraph.offsetHeight);
-    setDots(points, avgType);
+    if (times[puzzle]["timesList"].length <= 30) { setDots(points, avgType); }
     drawTimes(points, avgType);
 }
 
@@ -39,7 +47,7 @@ function setDrawOptions() {
     for (avgType of avgTypes) {
         chooseAvgType.innerHTML += `
             <option value="${avgType}" ${avgType === "all" ? "selected" : ""}>
-                ${avgType === "all" ? "all times" : "average of "+avgType}
+                ${avgType === "all" ? "all times" : "average of " + avgType}
             </option>
         `;
     }
@@ -89,7 +97,7 @@ function getPoints(avgType) {
     let gW = timeGraph.offsetWidth;
     let gH = timeGraph.offsetHeight;
     if (avgType === "all") {
-        getWorstTime();    
+        getWorstTime();
         for (let i = 1; i <= times[puzzle]["timesList"].length; i++) {
             points.push({
                 x: i === 1 ? 0.05 * gW : 0.95 * gW * (i - 1) / (list.length - 1),
@@ -113,32 +121,35 @@ function getPoints(avgType) {
 function getAveragesForDrawing(avgType) {
     let averages = [], sum = 0;
     for (let i = 0; i < times[puzzle]["timesList"].length - avgType; i++) {
-        for (let j = 0; j < avgType; j++) { sum += times[puzzle]["timesList"][i+j]["time"]; }
+        for (let j = 0; j < avgType; j++) { sum += times[puzzle]["timesList"][i + j]["time"]; }
         averages.push(sum / avgType);
         sum = 0;
     }
     return averages;
 }
 
-function refuseShowSavingOverlay() {
+function checkAllowFunc(permission) {
+    allowSaving = permission;
+    allowSavingCheckBox.checked = allowSaving;
+    savePermissions();
+    if (allowSaving) {
+        allowSavingFunc();
+    } else { permitSavingFunc(); }
+}
+
+function savePermissions() {
+    localStorage.setItem('allowSaving', allowSaving);
     localStorage.setItem('hideAllowSavingOverlay', true);
-    localStorage.setItem('allowSaving', false);
-    clearLocalStorage();
-    hideOverlays();
 }
 
 function allowSavingFunc() {
-    localStorage.setItem('hideAllowSavingOverlay', true);
     localStorage.setItem('allowSaving', true);
     hideOverlays();
 }
 
-function checkAllowFunc() {
-    allowSaving = !allowSaving;
-    localStorage.setItem('allowSaving', allowSaving);
-    if (allowSaving) {
-        allowSavingFunc();
-    } else { refuseShowSavingOverlay(); }
+function permitSavingFunc() {
+    clearLocalStorage();
+    hideOverlays();
 }
 
 function setTurns() {
@@ -242,12 +253,25 @@ function setBestAvgsToTimesObject() {
 }
 
 function setEvents() {
-    document.querySelector('body').addEventListener('keyup', keypressFunc);
-    document.querySelector('body').addEventListener('touchend', keypressFunc);
+    if (window.innerWidth > 800) {
+        if (!mobileView) {
+            body.addEventListener('click', hideTimeSpecs);
+            body.addEventListener('keyup', startStopTimer);
+        } else if (mobileView) { body.addEventListener('touchend', startStopTimerMobile); }
+
+    }
 }
 
-function keypressFunc(event) {
-    if (event.key === " " && !overlayShown) {
+function hideTimeSpecs(event) {
+    let timeSpecsOn = document.querySelector('.time-cont .time-specs.on');
+    if (timeSpecsOn && timeSpecsOn !== event.target.closest('.time-specs')) {
+        timeSpecsOn.classList.add('off');
+        timeSpecsOn.classList.remove('on');
+    }
+}
+
+function startStopTimer(event) {
+    if (event.key === ' ' && !overlayShown) {
         hideScramble();
         timerRuns = !timerRuns;
         if (timerRuns) {
@@ -257,10 +281,32 @@ function keypressFunc(event) {
     } else if (event.key === "Escape") { hideOverlays(); }
 }
 
-function showClearingOverlay() {
-    clearOverlay.querySelector('h1').innerHTML = typeof puzzle === "string" ? `Do you really want to delete your ${puzzle.slice(0, 1).toUpperCase() + puzzle.slice(1, puzzle.length)} times?` : `Do you really want to delete your ${puzzle}x${puzzle} times?`;
+function startStopTimerMobile(event) {
+    showHideStartAndStopBtn();
+    if (!overlayShown) {
+        hideScramble();
+        timerRuns = !timerRuns;
+        if (timerRuns) {
+            timer.innerHTML = "0.00";
+            timerIntervalCode = setInterval(runningTimer, 10);
+        } else { onTimerStop(); }
+    } else if (event.key === "Escape") { hideOverlays(); }
+}
+
+function showHideStartAndStopBtn() {
+    if(stopBtn.classList.contains('disNone')) {
+        stopBtn.classList.remove('disNone');
+        startBtn.innerHTML = "Stop";
+    } else if(!stopBtn.classList.contains('disNone')) {
+        stopBtn.classList.add('disNone');
+        startBtn.innerHTML = "Start";
+    }
+}
+
+function showClearingOverlayOfPuzzle() {
+    clearOverlayOfPuzzle.querySelector('h1').innerHTML = typeof puzzle === "string" ? `Do you really want to delete your ${puzzle.slice(0, 1).toUpperCase() + puzzle.slice(1, puzzle.length)} times?` : `Do you really want to delete your ${puzzle}x${puzzle} times?`;
     overlayShown = !overlayShown;
-    clearOverlay.classList.remove('disNone');
+    clearOverlayOfPuzzle.classList.remove('disNone');
 }
 
 function showClearingAllOverlay() {
@@ -271,7 +317,7 @@ function showClearingAllOverlay() {
 }
 
 function hideOverlays() {
-    document.querySelectorAll('.clear-overlay').forEach((overlay) => {
+    overlays.forEach((overlay) => {
         overlay.classList.add('disNone');
     })
     overlayShown = false;
@@ -416,6 +462,7 @@ function clearTimesOfPuzzle() {
     localStorage.setItem('times', JSON.stringify(times));
     removeDisplayedTimes();
     writeTimes();
+    ctx.clearRect(0, 0, timeGraph.offsetWidth, timeGraph.offsetHeight);
 }
 
 function resetTimes() {
@@ -425,6 +472,7 @@ function resetTimes() {
     setTimeAndScrambleObject();
     removeDisplayedTimes();
     setNoTimeYetText();
+    ctx.clearRect(0, 0, timeGraph.offsetWidth, timeGraph.offsetHeight);
     scrambleOfTimeDoc.innerHTML = "";
 }
 
@@ -452,6 +500,7 @@ function removeTime() {
     hideScrambleOfTime();
     recalcBestAverages();
     writeTimes();
+    chooseTimeTypeToDraw("all");
 }
 
 function recombineTimes() {
@@ -480,14 +529,32 @@ function getTimeHTML(i) {
     return `
         <div class="time-cont flex" data-timeindex="${i}">
             <p>${i + 1}: ${times[puzzle]["timesList"][i]["dnf"] ? "DNF" : (times[puzzle]["timesList"][i]["time"] / 1000).toFixed(2)}${times[puzzle]["timesList"][i]["penalty"] == 1 ? "+" : ""}</p>
-            <div class="time-specs flex">
-                <p onclick="showScrambleOfTime(this)">S</p>
-                <p onclick="plusTwo(${i})">+2</p>
-                <p onclick="setDnf(${i})">DNF</p>
-                <p class="delete-time" onclick="showDeleteTimeOverlay(this)">X</p>
+            <div class="time-specs off">
+                <p onclick="showHideTimeSpecs(this)">specs</p>
+                <div class="spec-elements flex">
+                    <p onclick="showScrambleOfTime(this)">S</p>
+                    <p onclick="plusTwo(${i})">+2</p>
+                    <p onclick="setDnf(${i})">DNF</p>
+                    <p class="delete-time" onclick="showDeleteTimeOverlay(this)">X</p>
+                </div>
             </div>
         </div>
     `;
+}
+
+function showHideTimeSpecs(elem) {
+    let timeSpecs = elem.closest('.time-specs');
+    if (document.querySelector('.times .all-times .time-cont .time-specs.on') && document.querySelector('.times .all-times .time-cont .time-specs.on') !== timeSpecs) {
+        document.querySelector('.times .all-times .time-cont .time-specs.on').classList.add('off');
+        document.querySelector('.times .all-times .time-cont .time-specs.on').classList.remove('on');
+    }
+    if (timeSpecs.classList.contains('on')) {
+        timeSpecs.classList.remove('on');
+        timeSpecs.classList.add('off');
+    } else {
+        timeSpecs.classList.add('on');
+        timeSpecs.classList.remove('off');
+    }
 }
 
 function setNoTimeYetText() {
@@ -664,16 +731,20 @@ function resetScrambleLength() {
 }
 
 function selectPuzzle() {
-    puzzle = +puzzleSelector.value ? +puzzleSelector.value : puzzleSelector.value;
-    scrambleOfTimeDoc.innerHTML = "";
-    clearButton.innerHTML = typeof puzzle === "string" ? `clear ${puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length)} times` : `clear ${puzzle}x${puzzle} times`;
-    timesHeadline.innerHTML = `${typeof puzzle === "string" ? puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length) : puzzle + "x" + puzzle} times:`;
-    timer.innerHTML = "0.00";
+    setPuzzleSelectStats();
     deleteAveragePrints();
     chooseTimeTypeToDraw("all");
     for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
     writeTimes();
     generateScramble();
+}
+
+function setPuzzleSelectStats() {
+    puzzle = +puzzleSelector.value ? +puzzleSelector.value : puzzleSelector.value;
+    scrambleOfTimeDoc.innerHTML = "";
+    clearButton.innerHTML = typeof puzzle === "string" ? `clear ${puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length)} times` : `clear ${puzzle}x${puzzle} times`;
+    timesHeadline.innerHTML = `${typeof puzzle === "string" ? puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length) : puzzle + "x" + puzzle} times:`;
+    timer.innerHTML = "0.00";
 }
 
 function deleteAveragePrints() {
@@ -685,13 +756,14 @@ function deleteAveragePrints() {
 }
 
 function plusTwo(index) {
-    times[puzzle][index]["penalty"] = times[puzzle][index]["penalty"] == 0 ? 1 : 0;
-    if (times[puzzle][index]["penalty"] == 1) {
-        times[puzzle][index]["time"] += 2000;
-    } else { times[puzzle][index]["time"] -= 2000; }
-    timesList.querySelectorAll('.time-cont')[index].querySelector('p:first-child').innerHTML = `${index + 1}: ${times[puzzle][index]["time"] / 1000}` + `${times[puzzle][index]["penalty"] == 0 ? "" : "+"}`;
+    times[puzzle]["timesList"][index]["penalty"] = times[puzzle]["timesList"][index]["penalty"] == 0 ? 1 : 0;
+    if (times[puzzle]["timesList"][index]["penalty"] == 1) {
+        times[puzzle]["timesList"][index]["time"] += 2000;
+    } else { times[puzzle]["timesList"][index]["time"] -= 2000; }
+    timesList.querySelectorAll('.time-cont')[index].querySelector('p:first-child').innerHTML = `${index + 1}: ${times[puzzle]["timesList"][index]["time"] / 1000}` + `${times[puzzle]["timesList"][index]["penalty"] == 0 ? "" : "+"}`;
     markMinMax();
     calcAverages();
+    chooseTimeTypeToDraw("all");
 }
 
 function setDnf(index) {
@@ -703,7 +775,7 @@ function setDnf(index) {
 function clearLocalStorage() {
     localStorage.removeItem('scrambles');
     localStorage.removeItem('times');
-    localStorage.removeItem('bestAverage');
+    localStorage.removeItem('bestAverages');
 }
 
 function markBestAverage(avgType) {

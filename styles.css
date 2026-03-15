@@ -11,11 +11,12 @@
 
 body {
     align-items: center;
+    flex-wrap: wrap;
     background-color: beige;
     row-gap: 50px;
 }
 
-body > * {
+body>* {
     width: 800px;
 }
 
@@ -26,6 +27,10 @@ body > * {
 .flex-c {
     display: flex;
     flex-direction: column;
+}
+
+button {
+    width: fit-content;
 }
 
 .flex-cr {
@@ -45,15 +50,24 @@ a {
     font-weight: 200;
 }
 
-input, label, select {
-    font-size: 40px;
+h2 {
+    text-align: center;
+}
+
+input,
+label,
+select {
+    font-size: 30px;
     padding: 0 10px;
 }
 
-/* p,
-a {
-    font-size: 30px;
-} */
+select {
+    width: fit-content;
+}
+
+select option {
+    height: 100%;
+}
 
 .disNone {
     display: none !important;
@@ -72,12 +86,18 @@ a {
     cursor: auto;
 }
 
+.advise {
+    font-size: 30px !important;
+    text-align: center;
+}
+
 .beige-font p {
     color: beige !important;
 }
 
 .timer-cont {
     row-gap: 20px;
+    width: 100%;
 }
 
 .timer-cont p {
@@ -87,21 +107,29 @@ a {
 .options {
     justify-content: center;
     column-gap: 30px;
+    row-gap: 15px;
+    flex-wrap: wrap;
 }
 
-.timer-cont .scramble-cont,
-.timer-cont .cube-size-cont {
+.timer-cont .scramble-length-cont,
+.timer-cont .cube-size-cont,
+.timer-cont .scramble-cont {
     height: fit-content;
     row-gap: 20px;
 }
 
-.timer-cont .scramble-cont .scramble-length-cont,
+.timer-cont .scramble-cont {
+    align-items: center;
+    row-gap: 15px;
+}
+
+.timer-cont .scramble-length-cont .scramble-length-cont,
 .timer-cont .cube-size-cont .scramble-length-cont {
     align-items: center;
     column-gap: 20px;
 }
 
-.timer-cont .scramble-cont .scramble,
+.timer-cont .scramble-length-cont .scramble,
 .timer-cont .cube-size-cont .scramble {
     font-size: 40px;
     flex-wrap: wrap;
@@ -109,7 +137,7 @@ a {
 
 .timer-cont p.timer {
     align-self: center;
-    font-size: 200px;
+    font-size: 150px;
 }
 
 .scramble {
@@ -123,15 +151,18 @@ a {
 }
 
 .times {
+    width: fit-content !important;
     height: 100%;
 }
 
-.times, .bottom-right {
+.times,
+.bottom-right {
     width: 45%;
 }
 
-.bottom-right > div {
-    width: 60%;
+.bottom-right>div {
+    width: 100%;
+    max-width: 300px;
     height: 25%;
 }
 
@@ -145,6 +176,7 @@ a {
 }
 
 .show-scramble {
+    align-items: center;
     width: 60% !important;
     aspect-ratio: 1 / 1;
     overflow: hidden;
@@ -162,7 +194,7 @@ a {
 
 .times .all-times,
 .times .averages {
-    width: 50%;
+    width: fit-content;
 }
 
 .times .averages {
@@ -171,20 +203,28 @@ a {
     overflow-y: scroll;
 }
 
+.times .averages::-webkit-scrollbar {
+    display: none;
+}
+
 .times .all-times-outter {
     height: 100%;
-    width: 50%;
+    width: fit-content;
     overflow-y: scroll;
+}
+
+.times .all-times-outter::-webkit-scrollbar {
+    display: none;
 }
 
 .times .all-times-outter .all-times {
     row-gap: 15px;
-    height: 300px;
+    height: fit-content;
     max-height: 360px;
-    width: 100% !important;
+    width: fit-content !important;
 }
 
-.times .all-times-outter .all-times .time-cont{
+.times .all-times-outter .all-times .time-cont {
     width: 100%;
 }
 
@@ -202,13 +242,43 @@ a {
 }
 
 .times .all-times .time-cont p {
-    width: 50%;
+    width: fit-content;
+    font-size: 30px;
 }
 
 .times .all-times .time-cont .time-specs {
     justify-content: space-between;
     column-gap: 10px;
-    width: 50%;
+    width: fit-content;
+    position: relative;
+}
+
+.times .all-times .time-cont .time-specs .spec-elements {
+    column-gap: 10px;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-100%);
+    z-index: 5;
+    background-color: black;
+    padding: 5px 10px;
+}
+
+.times .all-times .time-cont .time-specs:last-child .spec-elements {
+    transform: translateY(100%);
+}
+
+.times .all-times .time-cont .time-specs .spec-elements p {
+    color: white;
+}
+
+.times .all-times .time-cont .time-specs.off .spec-elements {
+    display: none !important;
+}
+
+.times .all-times .time-cont .time-specs.on .spec-elements {
+    display: flex;
 }
 
 .times .all-times .time-cont .time-specs p {
@@ -225,8 +295,7 @@ a {
     cursor: pointer;
 }
 
-
-.clear-overlay {
+.overlay {
     align-items: center;
     justify-content: space-between;
     padding: 1%;
@@ -236,24 +305,25 @@ a {
     max-height: 225px;
     background-color: green;
     border-radius: 3%;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 50;
 }
 
-.clear-overlay h1 {
+.overlay h1, .overlay p {
     color: white;
     text-align: center;
+    font-weight: 200;
 }
 
-.clear-overlay .buttons {
+.overlay .buttons {
     justify-content: space-evenly;
     width: 100%;
 }
 
-.clear-overlay .buttons button {
+.overlay .buttons button {
     color: white;
     cursor: pointer;
     font-size: 40px;
@@ -261,11 +331,11 @@ a {
     line-height: 27px;
 }
 
-.clear-overlay .buttons button.yes {
+.overlay .buttons button.yes {
     background-color: blue;
 }
 
-.clear-overlay .buttons button.no {
+.overlay .buttons button.no {
     color: black;
 }
 
@@ -275,10 +345,12 @@ a {
 
 .times-scrambler {
     justify-content: center;
-    width: 80vw;
+    width: fit-content;
     max-width: 1600px;
-    flex-wrap: wrap-reverse;
     height: 50vh;
+    column-gap: 50px;
+    row-gap: 25px;
+    flex-wrap: wrap;
 }
 
 .scramble-of-time .list {
@@ -311,19 +383,24 @@ a {
     width: 100%;
 }
 
-.averages > div {
+.averages>div {
     row-gap: 0;
 }
 
-.total, .mean, .best {
+.total,
+.mean,
+.best {
     column-gap: 10px;
 }
 
-.total p, .mean p, .best p {
-    font-size: 40px;
+.total p,
+.mean p,
+.best p {
+    font-size: 30px;
 }
 
 .no-times {
+    font-size: 35px;
     color: grey !important;
 }
 
@@ -351,7 +428,13 @@ a {
 }
 
 .graph-cont {
-    width: 60% !important;
+    row-gap: 15px;
+    height: unset !important;
+    aspect-ratio: 1 / 1;
+}
+
+.graph-cont form {
+    align-items: center;
 }
 
 #time-graph {
@@ -360,4 +443,31 @@ a {
     background-color: white;
     border: 1px solid black;
     border-radius: 10px;
+}
+
+.start-btn {
+    display: none;
+}
+
+.stop-btn {
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@media only screen and (max-width: 800px) {
+    .times-scrambler {
+        width: 100%;
+    }
+
+    .start-btn {
+        display: flex;
+        align-items: center;
+        align-self: center;
+        justify-content: center;
+    }
 }

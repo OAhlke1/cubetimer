@@ -461,7 +461,10 @@ select option {
 
 @media only screen and (max-width: 800px) {
     .times-scrambler {
+        flex-direction: column-reverse;
+        align-items: center;
         width: 100%;
+        height: fit-content;
     }
 
     .start-btn {

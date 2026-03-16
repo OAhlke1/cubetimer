@@ -1,4 +1,5 @@
 function switchScrambleLength() {
+    console.log(puzzle);
     switch (puzzle) {
         case 2:
             return 8;

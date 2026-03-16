@@ -726,16 +726,20 @@ function hideScrambleOfTime() {
 
 function resetScrambleLength() {
     scrambleLength = +scrambleLengthInput.value;
-    switchResetScrambleLength();
     generateScramble();
 }
 
 function selectPuzzle() {
     setPuzzleSelectStats();
-    deleteAveragePrints();
     chooseTimeTypeToDraw("all");
     for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
     writeTimes();
+    setScrambleLength();
+}
+
+function setScrambleLength() {
+    scrambleLength = switchScrambleLength();
+    scrambleLengthInput.value = scrambleLength;
     generateScramble();
 }
 
@@ -745,6 +749,7 @@ function setPuzzleSelectStats() {
     clearButton.innerHTML = typeof puzzle === "string" ? `clear ${puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length)} times` : `clear ${puzzle}x${puzzle} times`;
     timesHeadline.innerHTML = `${typeof puzzle === "string" ? puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length) : puzzle + "x" + puzzle} times:`;
     timer.innerHTML = "0.00";
+    deleteAveragePrints();
 }
 
 function deleteAveragePrints() {

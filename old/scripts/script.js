@@ -3,7 +3,6 @@ function onLoadFunc() {
     if (allowSaving) {
         allowSavingCheckBox.checked = true;
     } else { allowSavingCheckBox.checked = false; }
-    if (mobileView) { embedOptions(); }
     setTurns();
     setCanvas();
     setPuzzleSelects();
@@ -14,32 +13,6 @@ function onLoadFunc() {
         getWorstTime();
         chooseTimeTypeToDraw("all");
     } else { setTimeAndScrambleObject(); }
-    writeTimes();
-    showHideHowToStart();
-}
-
-function embedOptions() {
-    optionsOutter = document.createElement('div');
-    optionsOutter.classList.add('options-outter');
-    optionsOutter.classList.add('flex');
-    optionsOutter.classList.add('disNone');
-    optionsOutter.appendChild(options);
-    timerCont.appendChild(optionsOutter);
-    showOptionsBtn.onclick = showOptions;
-}
-
-function showHideHowToStart() {
-    if (window.innerWidth > 800) { startBtn.classList.add('disNone'); }
-}
-
-function showOptions() {
-    optionsOutter.classList.remove('disNone');
-    options.classList.remove('show-at-800');
-}
-
-function hideOptions() {
-    optionsOutter.classList.add('disNone');
-    options.classList.add('show-at-800');
 }
 
 function setCanvas() {
@@ -60,7 +33,7 @@ function getWorstTime() {
 function chooseTimeTypeToDraw(avgType) {
     let points = getPoints(avgType);
     ctx.clearRect(0, 0, timeGraph.offsetWidth, timeGraph.offsetHeight);
-    if (times[puzzle]["timesList"].length <= 30) { setDots(points, avgType); }
+    setDots(points, avgType);
     drawTimes(points, avgType);
 }
 
@@ -68,7 +41,7 @@ function setDrawOptions() {
     for (avgType of avgTypes) {
         chooseAvgType.innerHTML += `
             <option value="${avgType}" ${avgType === "all" ? "selected" : ""}>
-                ${avgType === "all" ? "all times" : "average of " + avgType}
+                ${avgType === "all" ? "all times" : "average of "+avgType}
             </option>
         `;
     }
@@ -118,7 +91,7 @@ function getPoints(avgType) {
     let gW = timeGraph.offsetWidth;
     let gH = timeGraph.offsetHeight;
     if (avgType === "all") {
-        getWorstTime();
+        getWorstTime();    
         for (let i = 1; i <= times[puzzle]["timesList"].length; i++) {
             points.push({
                 x: i === 1 ? 0.05 * gW : 0.95 * gW * (i - 1) / (list.length - 1),
@@ -142,35 +115,34 @@ function getPoints(avgType) {
 function getAveragesForDrawing(avgType) {
     let averages = [], sum = 0;
     for (let i = 0; i < times[puzzle]["timesList"].length - avgType; i++) {
-        for (let j = 0; j < avgType; j++) { sum += times[puzzle]["timesList"][i + j]["time"]; }
+        for (let j = 0; j < avgType; j++) { sum += times[puzzle]["timesList"][i+j]["time"]; }
         averages.push(sum / avgType);
         sum = 0;
     }
     return averages;
 }
 
-function checkAllowFunc(permission) {
-    allowSaving = permission;
-    allowSavingCheckBox.checked = allowSaving;
-    savePermissions();
-    if (allowSaving) {
-        allowSavingFunc();
-    } else { permitSavingFunc(); }
-}
-
-function savePermissions() {
-    localStorage.setItem('allowSaving', allowSaving);
+function refuseShowSavingOverlay() {
     localStorage.setItem('hideAllowSavingOverlay', true);
+    localStorage.setItem('allowSaving', false);
+    allowSavingCheckBox.checked = false;
+    allowSaving = false;
+    clearLocalStorage();
+    hideOverlays();
 }
 
 function allowSavingFunc() {
+    localStorage.setItem('hideAllowSavingOverlay', true);
     localStorage.setItem('allowSaving', true);
     hideOverlays();
 }
 
-function permitSavingFunc() {
-    clearLocalStorage();
-    hideOverlays();
+function checkAllowFunc() {
+    allowSaving = !allowSaving;
+    localStorage.setItem('allowSaving', allowSaving);
+    if (allowSaving) {
+        allowSavingFunc();
+    } else { refuseShowSavingOverlay(); }
 }
 
 function setTurns() {
@@ -228,7 +200,7 @@ function setTimeAndScrambleObject() {
         scrambles[`${puzzleType}`] = [];
         bestAverages[`${puzzleType}`] = {};
     }
-    // setBestAvgsToTimesObject();
+    setBestAvgsToTimesObject();
 }
 
 function setBestIndices(puzzleType) {
@@ -263,16 +235,8 @@ function getSavedElements() {
     times = JSON.parse(localStorage.getItem('times'));
     scrambles = JSON.parse(localStorage.getItem('scrambles'));
     bestAverages = JSON.parse(localStorage.getItem('bestAverages'));
-    // for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
-    setBestAverages();
+    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
     writeTimes();
-}
-
-function setBestAverages() {
-    for (avgType of avgTypes) {
-        let startIndex = times[puzzle]["bestAvgIndices"][avgType];
-        if(avgType != "all" && startIndex + avgType < times[puzzle]["timesList"].length) { calcBestAverage(avgType, startIndex); }
-    }
 }
 
 function setBestAvgsToTimesObject() {
@@ -282,30 +246,21 @@ function setBestAvgsToTimesObject() {
 }
 
 function setEvents() {
-    if (window.innerWidth > 800) {
-        body.addEventListener('click', hideTimeSpecs);
-        body.addEventListener('keyup', startStopTimer);
-        body.addEventListener('keypress', deleteTimeByEnter);
-        body.addEventListener('keypress', deleteTimesOfPuzzleByEnter);
-        body.addEventListener('keypress', resetTimerByEnter);
-    } else if (mobileView) {
-        startBtn.addEventListener('touchend', startStopTimerMobile);
-        stopBtn.addEventListener('touchend', startStopTimerMobile);
-    }
-    allowSavingCont.addEventListener('mouseover', () => { allowSavingCont.classList.add('hovered'); });
-    allowSavingCont.addEventListener('mouseleave', () => { allowSavingCont.classList.remove('hovered'); });
+    body.addEventListener('click', hideTimeSpecs);
+    body.addEventListener('keyup', keypressFunc);
+    body.addEventListener('touchend', keypressFunc);
 }
 
 function hideTimeSpecs(event) {
     let timeSpecsOn = document.querySelector('.time-cont .time-specs.on');
-    if (timeSpecsOn && timeSpecsOn !== event.target.closest('.time-specs')) {
+    if(timeSpecsOn && timeSpecsOn !== event.target.closest('.time-specs')) {
         timeSpecsOn.classList.add('off');
         timeSpecsOn.classList.remove('on');
     }
 }
 
-function startStopTimer(event) {
-    if (event.key === ' ' && !overlayShown) {
+function keypressFunc(event) {
+    if (event.key === " " && !overlayShown) {
         hideScramble();
         timerRuns = !timerRuns;
         if (timerRuns) {
@@ -313,28 +268,6 @@ function startStopTimer(event) {
             timerIntervalCode = setInterval(runningTimer, 10);
         } else { onTimerStop(); }
     } else if (event.key === "Escape") { hideOverlays(); }
-}
-
-function startStopTimerMobile(event) {
-    showHideStartAndStopBtn();
-    if (!overlayShown) {
-        hideScramble();
-        timerRuns = !timerRuns;
-        if (timerRuns) {
-            timer.innerHTML = "0.00";
-            timerIntervalCode = setInterval(runningTimer, 10);
-        } else { onTimerStop(); }
-    } else if (event.key === "Escape") { hideOverlays(); }
-}
-
-function showHideStartAndStopBtn() {
-    if (stopBtn.classList.contains('disNone')) {
-        stopBtn.classList.remove('disNone');
-        startBtn.innerHTML = "Stop";
-    } else if (!stopBtn.classList.contains('disNone')) {
-        stopBtn.classList.add('disNone');
-        startBtn.innerHTML = "Start";
-    }
 }
 
 function showClearingOverlayOfPuzzle() {
@@ -351,7 +284,7 @@ function showClearingAllOverlay() {
 }
 
 function hideOverlays() {
-    overlays.forEach((overlay) => {
+    document.querySelectorAll('.clear-overlay').forEach((overlay) => {
         overlay.classList.add('disNone');
     })
     overlayShown = false;
@@ -359,17 +292,12 @@ function hideOverlays() {
 
 function runningTimer() {
     milliseconds += 10;
-    if (milliseconds < 60000) {
-        timer.innerHTML = `${(milliseconds / 1000).toFixed(2)}`;
-    } else if (milliseconds >= 60000 && milliseconds < 3600000) {
-        timer.innerHTML = `${(milliseconds / 60000).toFixed(0)}:${((milliseconds % 60000) / 1000) > 10 ? ((milliseconds % 60000) / 1000).toFixed(0) : "0" + ((milliseconds % 60000) / 1000).toFixed(2)}`;
-    } else { timer.innerHTML = `${(milliseconds / 3600000).toFixed(0)}:${((milliseconds % 3600000) / 60000) > 10 ? ((milliseconds % 3600000) / 60000).toFixed(0) : "0" + ((milliseconds % 3600000) / 60000).toFixed(0)}:${(((milliseconds % 3600000) % 60000) / 1000) > 10 ? (((milliseconds % 3600000) % 60000) / 1000).toFixed(2) : "0" + (((milliseconds % 3600000) % 60000) / 1000).toFixed(2)}`; }
+    timer.innerHTML = `${(milliseconds / 1000).toFixed(2)}`;
 }
 
 function onTimerStop() {
     clearInterval(timerIntervalCode);
     pushValues();
-    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
     writeTimes();
     milliseconds = 0;
     if (times[puzzle]["timesList"].length > 1) { markMinMax(); }
@@ -389,15 +317,7 @@ function pushValues() {
 
 function calcAverages() {
     if (times[puzzle]["timesList"].length >= 1) {
-        for (avgType of avgTypes) {
-            let total = 0, list = [], min, max;
-            if (times[puzzle]["timesList"].length >= avgType) {
-                for (let i = 0; i < avgType; i++) { list.push(times[puzzle]["timesList"][times[puzzle]["timesList"].length - i]); }
-                min = Math.min(... list);
-                max = Math.max(... list);
-                writeAvgs(avgType);
-            }
-        }
+        for (avgType of avgTypes) { if (times[puzzle]["timesList"].length >= avgType) { writeAvgs(avgType); } }
     }
     if (allowSaving) { saveTimes(); }
 }
@@ -418,16 +338,17 @@ function getAvg(list, avgType) {
     return average;
 }
 
-function calcBestAverage(avgType, startIndex = 0) {
+function calcBestAverage(avgType) {
     let bestAvg = 0;
-    for (let i = startIndex; i < avgType; i++) { bestAvg += times[puzzle]["timesList"][startIndex + i]["time"]; }
+    let startIndex = times[puzzle]["bestAvgIndices"][avgType];
+    for (let i = 0; i < avgType; i++) { bestAvg += times[puzzle]["timesList"][startIndex + i]["time"]; }
     bestAvg /= avgType;
     document.querySelector(`.averages .of-${avgType} .best .time`).innerHTML = (bestAvg / 1000).toFixed(2);
     bestAvg = 0;
 }
 
-function calcBestAverages() {
-    /* let bestAverage = 0;
+function recalcBestAverages() {
+    let bestAverage = 0;
     let allTimesLength = times[puzzle]["timesList"].length;
     for (avgType of avgTypes) {
         if (avgType != "all") {
@@ -435,11 +356,10 @@ function calcBestAverages() {
                 for (let i = 0; i < allTimesLength - avgType; i++) {
                     let timeTotal = 0;
                     for (let j = i; j < i + avgType; j++) { timeTotal += times[puzzle]["timesList"][j]["time"]; }
-                    let currentAvg = timeTotal / avgType;
                     if (bestAverage === 0) {
-                        bestAverage = currentAvg;
-                    } else if (bestAverage > currentAvg) {
-                        bestAverage = currentAvg;
+                        bestAverage = timeTotal / avgType;
+                    } else if (bestAverage > timeTotal / avgType) {
+                        bestAverage = timeTotal / avgType;
                         bestAverages[avgType] = i;
                         times[puzzle]["bestAvgIndices"][avgType] = i;
                     }
@@ -447,8 +367,7 @@ function calcBestAverages() {
                 document.querySelector(`.averages .of-${avgType} .best .time`).innerHTML = (bestAverage / 1000).toFixed(2);
             } else { document.querySelector(`.averages .of-${avgType} .best .time`).innerHTML = ""; }
         }
-    } */
-    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
+    }
 }
 
 function getMeanAvg(list) {
@@ -540,25 +459,13 @@ function showDeleteTimeOverlay(elem) {
     deleteTimeOverlay.classList.remove('disNone');
 }
 
-function deleteTimeByEnter(event) {
-    if(event.key === "Enter" && !deleteTimeOverlay.classList.contains('disNone')) { deleteTimeOverlay.querySelector('.buttons .yes').click(); }
-}
-
-function deleteTimesOfPuzzleByEnter(event) {
-    if(event.key === "Enter" && !clearOverlayOfPuzzle.classList.contains('disNone')) { clearOverlayOfPuzzle.querySelector('.buttons .yes').click(); }
-}
-
-function resetTimerByEnter(event) {
-    if(event.key === "Enter" && !clearOverlay.classList.contains('disNone')) { clearOverlay.querySelector('.buttons .yes').click(); }
-}
-
 function removeTime() {
     let recombinedObject = recombineTimes();
     times[puzzle]["timesList"] = [...recombinedObject["times"]];
     scrambles[puzzle] = [...recombinedObject["scrambles"]];
     hideOverlays()
     hideScrambleOfTime();
-    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
+    recalcBestAverages();
     writeTimes();
     chooseTimeTypeToDraw("all");
 }
@@ -577,12 +484,12 @@ function recombineTimes() {
 }
 
 function writeTimes() {
-    calcAverages();
     timesList.innerHTML = '';
     if (times[puzzle]["timesList"].length) {
         for (let i = 0; i < times[puzzle]["timesList"].length; i++) { timesList.innerHTML += getTimeHTML(i); }
     } else { setNoTimeYetText(); }
     if (times[puzzle]["timesList"].length > 1) { markMinMax(); }
+    calcAverages();
 }
 
 function getTimeHTML(i) {
@@ -590,7 +497,7 @@ function getTimeHTML(i) {
         <div class="time-cont flex" data-timeindex="${i}">
             <p>${i + 1}: ${times[puzzle]["timesList"][i]["dnf"] ? "DNF" : (times[puzzle]["timesList"][i]["time"] / 1000).toFixed(2)}${times[puzzle]["timesList"][i]["penalty"] == 1 ? "+" : ""}</p>
             <div class="time-specs off">
-                <p onclick="showHideTimeSpecs(this)">opts.</p>
+                <p onclick="showHideTimeSpecs(this)">specs</p>
                 <div class="spec-elements flex">
                     <p onclick="showScrambleOfTime(this)">S</p>
                     <p onclick="plusTwo(${i})">+2</p>
@@ -604,11 +511,11 @@ function getTimeHTML(i) {
 
 function showHideTimeSpecs(elem) {
     let timeSpecs = elem.closest('.time-specs');
-    if (document.querySelector('.times .all-times .time-cont .time-specs.on') && document.querySelector('.times .all-times .time-cont .time-specs.on') !== timeSpecs) {
+    if(document.querySelector('.times .all-times .time-cont .time-specs.on') && document.querySelector('.times .all-times .time-cont .time-specs.on') !== timeSpecs) {
         document.querySelector('.times .all-times .time-cont .time-specs.on').classList.add('off');
         document.querySelector('.times .all-times .time-cont .time-specs.on').classList.remove('on');
     }
-    if (timeSpecs.classList.contains('on')) {
+    if(timeSpecs.classList.contains('on')) {
         timeSpecs.classList.remove('on');
         timeSpecs.classList.add('off');
     } else {
@@ -786,31 +693,21 @@ function hideScrambleOfTime() {
 
 function resetScrambleLength() {
     scrambleLength = +scrambleLengthInput.value;
+    switchResetScrambleLength();
     generateScramble();
 }
 
 function selectPuzzle() {
-    setPuzzleSelectStats();
-    chooseTimeTypeToDraw("all");
-    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
-    puzzleSelector.blur();
-    writeTimes();
-    setScrambleLength();
-}
-
-function setScrambleLength() {
-    scrambleLength = switchScrambleLength();
-    scrambleLengthInput.value = scrambleLength;
-    generateScramble();
-}
-
-function setPuzzleSelectStats() {
     puzzle = +puzzleSelector.value ? +puzzleSelector.value : puzzleSelector.value;
     scrambleOfTimeDoc.innerHTML = "";
     clearButton.innerHTML = typeof puzzle === "string" ? `clear ${puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length)} times` : `clear ${puzzle}x${puzzle} times`;
     timesHeadline.innerHTML = `${typeof puzzle === "string" ? puzzle.charAt(0).toUpperCase() + puzzle.slice(1, puzzle.length) : puzzle + "x" + puzzle} times:`;
     timer.innerHTML = "0.00";
     deleteAveragePrints();
+    chooseTimeTypeToDraw("all");
+    for (avgType of avgTypes) { if (avgType != "all" && times[puzzle]["timesList"].length >= avgType) { calcBestAverage(avgType); } }
+    writeTimes();
+    generateScramble();
 }
 
 function deleteAveragePrints() {

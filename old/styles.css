@@ -9,13 +9,8 @@
     font-family: 'high-sans-serif';
 }
 
-html {
-    font-size: 40px;
-}
-
 body {
     align-items: center;
-    flex-wrap: wrap;
     background-color: beige;
     row-gap: 50px;
 }
@@ -33,10 +28,6 @@ body>* {
     flex-direction: column;
 }
 
-button {
-    width: fit-content;
-}
-
 .flex-cr {
     display: flex;
     flex-direction: column-reverse;
@@ -50,7 +41,7 @@ p,
 a {
     margin: 0;
     white-space: wrap;
-    font-size: 1rem;
+    font-size: 40px;
     font-weight: 200;
 }
 
@@ -61,16 +52,12 @@ h2 {
 input,
 label,
 select {
-    font-size: 0.75rem;
+    font-size: 30px;
     padding: 0 10px;
 }
 
 select {
     width: fit-content;
-}
-
-select option {
-    height: 100%;
 }
 
 .disNone {
@@ -90,66 +77,44 @@ select option {
     cursor: auto;
 }
 
-.advise {
-    font-size: 0.75rem !important;
-    text-align: center;
-}
-
 .beige-font p {
     color: beige !important;
 }
 
 .timer-cont {
     row-gap: 20px;
-    width: 100%;
 }
 
 .timer-cont p {
-    font-size: 1.5rem;
+    font-size: 60px;
 }
 
 .options {
     justify-content: center;
     column-gap: 30px;
-    row-gap: 15px;
-    flex-wrap: wrap;
 }
 
-.timer-cont .scramble-length-cont,
-.timer-cont .cube-size-cont,
-.timer-cont .scramble-cont {
+.timer-cont .scramble-cont,
+.timer-cont .cube-size-cont {
     height: fit-content;
     row-gap: 20px;
 }
 
-.timer-cont .scramble-cont {
-    align-items: center;
-    row-gap: 15px;
-}
-
-.timer-cont .scramble-length-cont .scramble-length-cont,
+.timer-cont .scramble-cont .scramble-length-cont,
 .timer-cont .cube-size-cont .scramble-length-cont {
     align-items: center;
     column-gap: 20px;
 }
 
-.timer-cont .scramble-length-cont .scramble,
+.timer-cont .scramble-cont .scramble,
 .timer-cont .cube-size-cont .scramble {
-    font-size: 1rem;
+    font-size: 40px;
     flex-wrap: wrap;
 }
 
 .timer-cont p.timer {
     align-self: center;
-    font-size: 3rem;
-}
-
-.timer-cont .show-options {
-    display: block;
-    align-self: center;
-    width: 40%;
-    text-align: center;
-    font-size: 0.75rem;
+    font-size: 200px;
 }
 
 .scramble {
@@ -231,7 +196,7 @@ select option {
 
 .times .all-times-outter .all-times {
     row-gap: 15px;
-    height: fit-content;
+    height: 300px;
     max-height: 360px;
     width: fit-content !important;
 }
@@ -255,7 +220,7 @@ select option {
 
 .times .all-times .time-cont p {
     width: fit-content;
-    font-size: 0.75rem;
+    font-size: 30px;
 }
 
 .times .all-times .time-cont .time-specs {
@@ -294,7 +259,7 @@ select option {
 }
 
 .times .all-times .time-cont .time-specs p {
-    font-size: 0.75rem;
+    font-size: 30px;
 }
 
 .times .all-times .time-cont .delete-time {
@@ -307,7 +272,8 @@ select option {
     cursor: pointer;
 }
 
-.overlay {
+
+.clear-overlay {
     align-items: center;
     justify-content: space-between;
     padding: 1%;
@@ -317,38 +283,36 @@ select option {
     max-height: 225px;
     background-color: green;
     border-radius: 3%;
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 50;
 }
 
-.overlay h1,
-.overlay p {
+.clear-overlay h1 {
     color: white;
     text-align: center;
-    font-weight: 200;
 }
 
-.overlay .buttons {
+.clear-overlay .buttons {
     justify-content: space-evenly;
     width: 100%;
 }
 
-.overlay .buttons button {
+.clear-overlay .buttons button {
     color: white;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 40px;
     padding: 0 20px;
     line-height: 27px;
 }
 
-.overlay .buttons button.yes {
+.clear-overlay .buttons button.yes {
     background-color: blue;
 }
 
-.overlay .buttons button.no {
+.clear-overlay .buttons button.no {
     color: black;
 }
 
@@ -362,7 +326,6 @@ select option {
     max-width: 1600px;
     height: 50vh;
     column-gap: 50px;
-    row-gap: 25px;
 }
 
 .scramble-of-time .list {
@@ -372,7 +335,7 @@ select option {
 }
 
 .scramble-of-time .list p {
-    font-size: 1rem;
+    font-size: 40px;
     white-space: wrap;
 }
 
@@ -408,45 +371,20 @@ select option {
 .total p,
 .mean p,
 .best p {
-    font-size: 0.75rem;
+    font-size: 30px;
 }
 
 .no-times {
-    font-size: 0.875rem;
     color: grey !important;
 }
 
 .allow-saving {
     align-items: center;
-    position: relative;
-}
-
-.allow-saving .title {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background-color: white;
-    border: 2px solid black;
-    padding: 5px;
-    position: absolute;
-    top: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.allow-saving.hovered .title {
-    display: flex;
-}
-
-.allow-saving .title p {
-    font-size: 0.75rem;
-    text-align: center;
 }
 
 .copyright {
     align-self: center;
-    font-size: 0.6rem;
+    font-size: 24px;
 }
 
 .best-marked {
@@ -479,97 +417,4 @@ select option {
     background-color: white;
     border: 1px solid black;
     border-radius: 10px;
-}
-
-.start-btn {
-    display: none;
-    width: 80%;
-    aspect-ratio: 5;
-    color: white;
-    font-size: 1.5rem !important;
-    background-color: red;
-}
-
-.stop-btn {
-    width: 100vw;
-    height: 100vh;
-    background-color: transparent;
-    border: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.show-at-800 {
-    display: flex;
-}
-
-.hide-at-800 {
-    display: none;
-}
-
-.options-outter .options .close-options {
-    align-items: center;
-    justify-content: center;
-    width: 2%;
-    aspect-ratio: 1;
-    padding: 0;
-    position: absolute;
-    top: 1%;
-    right: 1%;
-    cursor: pointer;
-}
-
-.options-outter .options .close-options img {
-    width: 70%;
-    height: auto;
-}
-
-@media only screen and (max-width: 800px) {
-    html {
-        font-size: 35px;
-    }
-
-    .hide-at-800 {
-        display: flex;
-    }
-
-    .show-at-800 {
-        display: none;
-    }
-
-    .times-scrambler {
-        flex-direction: column-reverse;
-        align-items: center;
-        width: 100%;
-        height: fit-content;
-        flex-wrap: wrap;
-    }
-
-    .options-outter {
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        background-color: transparent;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 50000;
-    }
-
-    .options-outter .options {
-        width: 80%;
-        background-color: white;
-        padding: 5%;
-        border: 3px solid black;
-        position: relative;
-    }
-
-    .start-btn {
-        display: flex;
-        align-items: center;
-        align-self: center;
-        justify-content: center;
-    }
 }

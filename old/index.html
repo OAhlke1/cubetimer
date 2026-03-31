@@ -11,34 +11,24 @@
 
 <body class="flex-c" onload="onLoadFunc()">
     <div class="timer-cont flex-c">
-        <div class="options flex show-at-800">
-            <button class="close-options hide-at-800 flex" onclick="hideOptions()"><img src="./images/close.svg" alt=""></button>
+        <div class="options flex">
             <div class="cube-size-cont flex">
                 <label for="choose-puzzle">puzzle:</label>
                 <select id="choose-puzzle" type="select" onchange="selectPuzzle()"></select>
             </div>
-            <div class="scramble-length-cont flex-c">
+            <div class="scramble-cont flex-c">
                 <div class="scramble-length-cont flex">
                     <label for="scramble-length">scramble-length:</label>
                     <input id="scramble-length" type="number" value="20" max="500" onchange="resetScrambleLength()">
                 </div>
             </div>
             <div class="allow-saving flex">
-                <div class="title flex">
-                    <p>When unselected, the entire timer will be resetted.</p>
-                </div>
                 <label for="allow-saving">save timer data</label>
-                <input type="checkbox" id="allow-saving" onclick="checkAllowFunc(!allowSaving)">
+                <input type="checkbox" id="allow-saving" onclick="checkAllowFunc()">
             </div>
         </div>
-        <div class="scramble-cont flex-c">
-            <div class="scramble flex"></div>
-            <p class="advise">(Just click on each turn to follow the scrambling turn by turn)</p>
-        </div>
-        <button class="show-options hide-at-800">show options</button>
+        <div class="scramble flex"></div>
         <p class="timer">0.00</p>
-        <button class="start-btn flex advise hide-at-800">Start</button>
-        <button class="stop-btn flex advise hide-at-800 disNone"></button>
     </div>
     <div class="times-scrambler flex">
         <div class="times flex-c">
@@ -77,7 +67,7 @@
         </div>
     </div>
 
-    <div class="delete-time-overlay overlay flex-c disNone">
+    <div class="delete-time-overlay clear-overlay flex-c disNone">
         <h1>Do you really want to delete this time</h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="removeTime()">Yes</button>
@@ -85,7 +75,7 @@
         </div>
     </div>
 
-    <div class="delete-all-puzzle-times overlay flex-c disNone">
+    <div class="delete-all-puzzle-times clear-overlay flex-c disNone">
         <h1></h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="clearTimesOfPuzzle()">Yes</button>
@@ -93,7 +83,7 @@
         </div>
     </div>
 
-    <div class="clear-all-overlay overlay flex-c disNone">
+    <div class="clear-all-overlay clear-overlay flex-c disNone">
         <h1>Do you really want to delete all your times?</h1>
         <div class="flex buttons">
             <button class="flex yes" onclick="resetTimes()">Yes</button>
@@ -101,13 +91,15 @@
         </div>
     </div>
 
-    <div class="cookies-overlay overlay flex-c disNone">
-        <p>Would you like this page to save your times and their scrambles into your webbrowsers storage?</p>
+    <div class="cookies-overlay clear-overlay flex-c disNone">
+        <p>Would you like this page to save your times their scrambles into your webbrowsers storage?</p>
         <div class="flex buttons">
-            <button class="flex yes" onclick="checkAllowFunc(true)">Yes</button>
-            <button class="flex no" onclick="checkAllowFunc(false)">No</button>
+            <button class="flex yes" onclick="allowSavingFunc()">Yes</button>
+            <button class="flex no" onclick="refuseShowSavingOverlay()">No</button>
         </div>
     </div>
+
+    <div class="test"></div>
 </body>
 
 <script src="scripts/global-vars.js"></script>
